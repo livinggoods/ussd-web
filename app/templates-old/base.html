@@ -1,0 +1,289 @@
+{% extends "bootstrap/base.html" %}
+
+
+{% block html_attribs %} lang="en"{% endblock %}
+
+
+{% block title %}Insights{% endblock title %}
+
+
+{% block styles %}
+    <!-- Favicon.ico -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{{ url_for('static', filename='sb-admin-2/bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="{{ url_for('static', filename='sb-admin-2/bower_components/metisMenu/dist/metisMenu.min.css') }}" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link href="{{ url_for('static', filename='sb-admin-2/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css') }}" rel="stylesheet">
+
+    <!-- DataTables Responsive CSS -->
+    <link href="{{ url_for('static', filename='sb-admin-2/bower_components/datatables-responsive/css/dataTables.responsive.css') }}" rel="stylesheet">
+
+    <!-- SB-Admin-2 Custom CSS -->
+    <link href="{{ url_for('static', filename='sb-admin-2/dist/css/sb-admin-2.css') }}" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="{{ url_for('static', filename='sb-admin-2/bower_components/morrisjs/morris.css') }}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{{ url_for('static', filename='sb-admin-2/bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+{% endblock styles %}
+
+
+{% block navbar %}
+<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+
+    {% block navbar_brand %}
+    <div class="navbar-header">
+
+        <!-- mobile menu toggle -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <!-- end mobile menu toggle -->
+
+        <!-- brand -->
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">Insights</a>
+        <!-- end brand-->
+
+    </div>
+    {% endblock navbar_brand %}
+
+    {% block top_menu_items %}
+    <ul class="nav navbar-top-links navbar-right">
+
+        {% block top_menu_items_alert %}
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-bell fa-fw"></i>
+                <span class="badge badge-alerts">42</span>
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-alerts">
+                <li>
+                    <a href="#">
+                        <div>
+                            <i class="fa fa-exclamation-circle fa-fw"></i> Data Entry Error - Missing Cohort Size
+                            <span class="pull-right text-muted small">1 day ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div>
+                            <i class="fa fa-exclamation-circle fa-fw"></i> Data Entry Error - No Cohort End Date
+                            <span class="pull-right text-muted small">3 days ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div>
+                            <i class="fa fa-exclamation-circle fa-fw"></i> Data Entry Error - Bad Portfolio Relationship
+                            <span class="pull-right text-muted small">5 days ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div>
+                            <i class="fa fa-exclamation-circle fa-fw"></i> Data Entry Error - Missing Portfolio Relationships
+                            <span class="pull-right text-muted small">5 days ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div>
+                            <i class="fa fa-exclamation-circle fa-fw"></i> Data Entry Error - Missing Domain Name
+                            <span class="pull-right text-muted small">10 days ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a class="text-center" href="#">
+                        <strong>See All Alerts</strong>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        {% endblock top_menu_items_alert %}
+
+        {% block top_menu_items_account %}
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+                <li>
+                    <a href="{{ url_for('main.user', username=current_user.username) }}"><i class="fa fa-fw fa-user"></i> Profile</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.change_email_request') }}"><i class="fa fa-fw fa-gear"></i> Change Email</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.change_password') }}"><i class="fa fa-fw fa-gear"></i> Change Password</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out fa-fw"></i> Log Out</a>
+                </li>
+            </ul>
+        </li>
+        {% endblock top_menu_items_account %}
+
+    </ul>
+    {% endblock top_menu_items %}
+
+    {% block sidebard_menu_items %}
+    <div class="navbar-default sidebar" role="navigation">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+
+                <li class="sidebar-search">
+                <form action="{{ url_for('search.search_app') }}" method="post">
+                        <div id="bloodhound" class="input-group custom-search-form">
+                            <input type="text" class="typeahead form-control" name="query" type="search" data-provide="typeahead" placeholder="Search...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('main.index') }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                </li>
+
+                <li>
+                    <a href="#"><i class="fa fa-cubes fa-fw"></i> Relationships<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="{{ url_for('main.companies', username = current_user.username) }}"><i class="fa fa-lightbulb-o fa-fw"></i> Startup Companies</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.firms', username = current_user.username, firm_type_code = 'vc') }}"><i class="fa fa-university fa-fw"></i> Venture Capital Firms</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.firms', username = current_user.username, firm_type_code = 'ai') }}"><i class="fa fa-rocket fa-fw"></i> Acclerators and Incubators</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.firms', username = current_user.username, firm_type_code = 'su') }}"><i class="fa fa-building-o fa-fw"></i> Startup Organizations</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+
+                <li>
+                    <a href="#"><i class="fa fa-files-o fa-fw"></i> Reports<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="#"><i class="fa fa-file-o fa-fw"></i> Report 1</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-file-o fa-fw"></i> Report 2</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-file-o fa-fw"></i> Report 3</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-file-o fa-fw"></i> Report 4</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                <a href="{{ url_for('main.users', username = current_user.username) }}"><i class="fa fa-users fa-fw"></i> Users</a>
+                </li>
+
+                <li>
+                    <a href="#"><i class="fa fa-bullseye fa-fw"></i> Goals</a>
+                </li>
+
+            </ul>
+        </div>
+        <!-- /.sidebar-collapse -->
+    </div>
+    {% endblock sidebard_menu_items %}
+
+</nav>
+{% endblock navbar %}
+
+
+{% block content %}
+<div id="page-wrapper">
+    <div class="container-fluid">
+
+        {% block content_flash %}
+            {% for message in get_flashed_messages(category_filter=["info"]) %}
+            <div class="alert alert-info alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> {{ message }}
+            </div>
+            {% endfor %}
+
+            {% for message in get_flashed_messages(category_filter=["error"]) %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{ message }}
+            </div>
+            {% endfor %}
+
+            {% for message in get_flashed_messages(category_filter=["success"]) %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ message }}
+            </div>
+            {% endfor %}
+        {% endblock content_flash %}
+
+        {% block wrapper %}
+        {% endblock wrapper %}
+
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block scripts %}
+
+<!-- Set Global Variable of Site Root -->
+<script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.host|tojson|safe }};
+</script>
+
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/jquery/dist/jquery.min.js') }}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+<!-- Metis Menu Plugin JavaScript -->
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/metisMenu/dist/metisMenu.min.js') }}"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="{{ url_for('static', filename='sb-admin-2/dist/js/sb-admin-2.js') }}"></script>
+
+<!-- Autocomplete -->
+<script src="{{ url_for('static', filename='typeahead/typeahead.bundle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/autocomplete.js') }}"></script>
+
+<!-- Moment -->
+{{ moment.include_moment() }}
+
+{% endblock scripts %}

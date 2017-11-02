@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block wrapper %}
+
+    <!-- startup name header -->
+    <div class="page-header">
+        {% if firm.type.firm_type_code == 'vc' %}
+            <i class="fa fa-university fa-5 firm-thumbnail"></i>
+        {% elif firm.type.firm_type_code == 'ai' %}
+            <i class="fa fa-rocket fa-6 firm-thumbnail"></i>
+        {% elif firm.type.firm_type_code == 'su' %}
+            <i class="fa fa-building-o fa-6 firm-thumbnail"></i>
+        {% endif %}
+        <div class="firm-header">
+            <h1>{{ firm.name }}<br><small>{{firm.tier.firm_tier}} | {{ firm.type.firm_type }}</small></h1>
+            <p>Located in <strong>{{ firm.country }}</strong>.</p>
+            <p>Managed by <strong><a href="{{ url_for('main.user', username=firm.owner.username) }}">{{ firm.owner.username }}</a></strong>.</p>
+            <p>Related to <strong>{{ companies|length }} Startups</strong>.</p>
+        </div>
+    </div>
+    <!-- end startup name header -->
+
+
+    <div class="row">
+
+        <!-- billing history -->
+        <div class="col-lg-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-line-chart fa-fw"></i> Historical 12-Month Spend
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a href="#"><i class="fa fa-file-excel-o fa-fw"></i> Export to Excel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="spend-by-month-chart"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- end billing history -->
+
+        <!--  penetration donut chart -->
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-pie-chart fa-fw"></i> M+ Penetration
+                </div>
+                <div class="panel-body">
+                    <div class="morris-charts" id="penetration-donut-chart"></div>
+                </div>
+            </div>
+        </div>
+        <!-- end penetration donut chart -->
+
+    </div>
+    <!-- ./row -->
+
+
+    <!-- startups table -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-lightbulb-o fa-fw"></i> Startup Relationships
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Owner</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Charges</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for company in companies %}
+                                <tr>
+                                    <td>
+                                        {{ loop.index }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.company', id=company.Company.id) }}">{{ company.Company.name }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.user', username=company.User.username) }}">{{ company.User.username }}</a>
+                                    </td>
+                                    <td>
+                                        {{ company.Company.city }}
+                                    </td>
+                                    <td>
+                                        {{ company.Company.state }}
+                                    </td>
+                                    <td>
+                                        {{ company.Company.country }}
+                                    </td>
+                                    <td>
+                                        $10,000
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end startups table -->
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+
+<!-- Morris Chart Data -->
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/raphael/raphael-min.js') }}"></script>
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/morrisjs/morris.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/morris-data-firm.js') }}"></script>
+
+{% endblock scripts %}

@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+ {% block title %}Dashboard{% endblock %}
+{% block page_content %}
+                <!-- ============================================================== -->
+                <!-- Bread crumb and right sidebar toggle -->
+                <!-- ============================================================== -->
+
+                <!-- ============================================================== -->
+                <!-- End Bread crumb and right sidebar toggle -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <!-- Row -->
+                <div class="row">
+                    <!-- Column -->
+                    <div class="col-lg-8 col-md-7">
+                        <div class="card">
+                            <div class="card-block">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="d-flex flex-wrap">
+                                            <div>
+                                                <h3 class="card-title">Data Overview</h3>
+                                                <h6 class="card-subtitle">Data purchase Vs Data Usage</h6> </div>
+                                            <div class="ml-auto">
+                                                <ul class="list-inline">
+                                                    <li>
+                                                        <h6 class="text-muted text-success"><i class="fa fa-circle font-10 m-r-10 "></i>Bought</h6> </li>
+                                                    <li>
+                                                        <h6 class="text-muted  text-info"><i class="fa fa-circle font-10 m-r-10"></i>Used</h6> </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="amp-pxl" style="height: 360px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-5">
+                        <div class="card">
+                            <div class="card-block">
+                                <h3 class="card-title">Branch </h3>
+                                <h6 class="card-subtitle">Branch Usage</h6>
+                                <div id="visitor" style="height: 290px; width: 100%; max-height: 290px; position: relative;" class="c3">
+
+                                </div>
+                            </div>
+                            <div>
+                                <hr class="m-t-0 m-b-0">
+                            </div>
+                            <div class="card-block text-center ">
+                                <ul class="list-inline m-b-0">
+                                    <li>
+                                        <h6 class="text-muted text-info"><i class="fa fa-circle font-10 m-r-10 "></i>Mayuge</h6> </li>
+                                    <li>
+                                        <h6 class="text-muted  text-primary"><i class="fa fa-circle font-10 m-r-10"></i>Kalangala</h6> </li>
+                                    <li>
+                                        <h6 class="text-muted  text-success"><i class="fa fa-circle font-10 m-r-10"></i>Busia</h6> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Row -->
+                <!-- Row -->
+                <div class="row">
+                    <!-- Column -->
+                    <div class="col-lg-4 col-xlg-3 col-md-5">
+                        <!-- Column -->
+                        <div class="card">
+                            <img class="card-img-top" src="{{url_for('static', filename='assets/images/background/profile-bg.jpg')}}" alt="Card image cap">
+                            <div class="card-block little-profile text-center">
+                                <div class="pro-img"><img src="{{url_for('static', filename='assets/images/branch.png')}}" alt="user"></div>
+                                <h3 class="m-b-0">Branch Name</h3>
+                                <p>200MB on Average this month</p>
+                                <a href="javascript:void(0)" class="m-t-10 waves-effect waves-dark btn btn-primary btn-md btn-rounded">More</a>
+                                <div class="row text-center m-t-20">
+                                    <div class="col-lg-4 col-md-4 m-t-20">
+                                        <h3 class="m-b-0 font-light">1099</h3><small>CHVs</small></div>
+                                    <div class="col-lg-4 col-md-4 m-t-20">
+                                        <h3 class="m-b-0 font-light">23,469</h3><small>MBs this week</small></div>
+                                    <div class="col-lg-4 col-md-4 m-t-20">
+                                        <h3 class="m-b-0 font-light">6035</h3><small>Monthly Average</small></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                        <div class="card">
+                            <div class="card-block bg-info">
+                                <h4 class="text-white card-title">Recent Users</h4>
+                                <h6 class="card-subtitle text-white m-b-0 op-5">List of active users</h6>
+                            </div>
+                            <div class="card-block">
+                                <div class="message-box contact-box">
+                                    <h2 class="add-ct-btn"><button type="button" class="btn btn-circle btn-lg btn-success waves-effect waves-dark">+</button></h2>
+                                    <div class="message-widget contact-widget">
+                                        <!-- Message -->
+                                        <a href="#">
+                                            <div class="user-img"> <img src="{{url_for('static', filename='assets/images/users/1.jpg')}}" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div>
+                                            <div class="mail-contnet">
+                                                <h5>David Kimaru</h5> <span class="mail-desc">idkimaru@livinggoods.org</span></div>
+                                        </a>
+                                        <!-- Message -->
+                                        <a href="#">
+                                            <div class="user-img"> <img src="{{url_for('static', filename='assets/images/users/2.jpg')}}" alt="user" class="img-circle"> <span class="profile-status busy pull-right"></span> </div>
+                                            <div class="mail-contnet">
+                                                <h5>Simon Mutama</h5> <span class="mail-desc">smutama@livinggoods.org</span></div>
+                                        </a>
+                                        <!-- Message -->
+                                        <a href="#">
+                                            <div class="user-img"> <span class="round">A</span> <span class="profile-status away pull-right"></span> </div>
+                                            <div class="mail-contnet">
+                                                <h5>Victor Chelule</h5> <span class="mail-desc">vchelule@livinggoods.org</span></div>
+                                        </a>
+                                        <!-- Message -->
+                                        <a href="#">
+                                            <div class="user-img"> <img src="{{url_for('static', filename='assets/images/users/4.jpg')}}" alt="user" class="img-circle"> <span class="profile-status offline pull-right"></span> </div>
+                                            <div class="mail-contnet">
+                                                <h5>Daniel Mugula</h5> <span class="mail-desc">dmugula@livinggoods.org</span></div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-xlg-9 col-md-7">
+                        <div class="card">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs profile-tab" role="tablist">
+                                <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#home" role="tab">Recent USSD Messages</a> </li>
+                            </ul>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="home" role="tabpanel">
+                                    <div class="card-block">
+                                        <div class="profiletimeline">
+
+                                            <div class="sl-item">
+                                                <div class="sl-left"> <img src="{{url_for('static', filename='assets/images/users/3.jpg')}}" alt="user" class="img-circle"> </div>
+                                                <div class="sl-right">
+                                                    <div><a href="#" class="link">John Doe</a> <span class="sl-date">5 minutes ago</span>
+                                                        <p class="m-t-10"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper </p>
+                                                    </div>
+                                                    <div class="like-comm m-t-20"> <a href="javascript:void(0)" class="link m-r-10">2 comment</a> <a href="javascript:void(0)" class="link m-r-10"><i class="fa fa-heart text-danger"></i> 5 Love</a> </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="sl-item">
+                                                <div class="sl-left"> <img src="{{url_for('static', filename='assets/images/users/4.jpg')}}" alt="user" class="img-circle"> </div>
+                                                <div class="sl-right">
+                                                    <div><a href="#" class="link">John Doe</a> <span class="sl-date">5 minutes ago</span>
+                                                        <blockquote class="m-t-10">
+                                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
+                                                        </blockquote>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--second tab-->
+                            </div>
+                        </div>
+                        <div class="cards">
+                            {% import "bootstrap/wtf.html" as wtf %}
+
+                            <form method="POST" action="/" class="" id="" enctype=multipart/form-data >
+                              {{ form.csrf_token }}
+                              {{ wtf.form_field(form.file_field) }}
+                              {{ wtf.form_field(form.submit) }}
+                             </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End PAge Content -->
+                <!-- ============================================================== -->
+{% endblock %}

@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block wrapper %}
+
+    <!-- startup name header -->
+    <div class="page-header">
+        <i class="fa fa-lightbulb-o fa-6 firm-thumbnail"></i>
+        <div class="firm-header">
+            <h1>{{ company.name }}<br><small>Startup Company</small></h1>
+            <p>Located in <strong>{{ company.country }}</strong>.</p>
+            <p>Managed by <strong><a href="{{ url_for('main.user', username=company.owner.username) }}">{{ company.owner.username }}</a></strong>.</p>
+            {% if vc_firms|length == 1 %}
+                <p>Investment from <strong>{{ vc_firms|length }} Venture Capital Firm</strong>.</p>
+            {% elif vc_firms|length > 1%}
+                <p>Investments from <strong>{{ vc_firms|length }} Venture Capital Firms</strong>.</p>
+            {% endif %}
+            {% if ai_firms|length == 1 %}
+                <p>Related to <strong>{{ ai_firms|length }} Accelerator and Incubator</strong>.</p>
+            {% elif ai_firms|length > 1%}
+                <p>Related to <strong>{{ ai_firms|length }} Accelerators and Incubators</strong>.</p>
+            {% endif %}
+            {% if su_orgs|length == 1 %}
+                <p>Related to <strong>{{ su_orgs|length }} Startup Organization</strong>.</p>
+            {% elif su_orgs|length > 1%}
+                <p>Related to <strong>{{ su_orgs|length }} Startup Organizations</strong>.</p>
+            {% endif %}
+        </div>
+    </div>
+    <!-- end startup name header -->
+
+
+    <div class="row">
+
+        <!-- billing history -->
+        <div class="col-lg-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-line-chart fa-fw"></i> Historical 12-Month Spend
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a href="#"><i class="fa fa-file-excel-o fa-fw"></i> Export to Excel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="spend-by-month-chart"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- end billing history -->
+
+        <!--  optimiztion donut chart -->
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-money fa-fw"></i> Optimization Percentage
+                </div>
+                <div class="panel-body">
+                    <div class="morris-charts" id="optmization-donut-chart"></div>
+                </div>
+            </div>
+        </div>
+        <!-- end optimization donut chart -->
+
+    </div>
+    <!-- ./row -->
+
+
+    {% if vc_firms %}
+    <!-- vc firms table -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-university fa-fw"></i> Venture Capital Firm Relationships
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Tier</th>
+                                    <th>Owner</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Portfolio Companies</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for vc in vc_firms %}
+                                <tr>
+                                    <td>
+                                        {{ loop.index }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.firm', id=vc.Firm.id) }}">{{ vc.Firm.name }}</a>
+                                    </td>
+                                    <td>
+                                        {{ vc.FirmType.firm_type }}
+                                    </td>
+                                    <td>
+                                        {{ vc.FirmTier.firm_tier }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.user', username=vc.User.username) }}">{{ vc.User.username }}</a>
+                                    </td>
+                                    <td>
+                                        {{ vc.Firm.city }}
+                                    </td>
+                                    <td>
+                                        {{ vc.Firm.state }}
+                                    </td>
+                                    <td>
+                                        {{ vc.Firm.country }}
+                                    </td>
+                                    <td>
+                                        10
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end vc firms table -->
+    {% endif %}
+
+    {% if ai_firms %}
+    <!-- ai firms table -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-rocket fa-fw"></i> Accelerator and Incubator Relationships
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Tier</th>
+                                    <th>Owner</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Portfolio Companies</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for ai in ai_firms %}
+                                <tr>
+                                    <td>
+                                        {{ loop.index }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.firm', id=ai.Firm.id) }}">{{ ai.Firm.name }}</a>
+                                    </td>
+                                    <td>
+                                        {{ ai.FirmType.firm_type }}
+                                    </td>
+                                    <td>
+                                        {{ ai.FirmTier.firm_tier }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.user', username=ai.User.username) }}">{{ ai.User.username }}</a>
+                                    </td>
+                                    <td>
+                                        {{ ai.Firm.city }}
+                                    </td>
+                                    <td>
+                                        {{ ai.Firm.state }}
+                                    </td>
+                                    <td>
+                                        {{ ai.Firm.country }}
+                                    </td>
+                                    <td>
+                                        10
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end top ai firms table -->
+    {% endif %}
+
+    {% if su_orgs %} <!-- startup orgs table --> <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-building-o fa-fw"></i> Startup Organization Relationships
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Tier</th>
+                                    <th>Owner</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Portfolio Companies</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for su in su_orgs %}
+                                <tr>
+                                    <td>
+                                        {{ loop.index }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.firm', id=su.Firm.id) }}">{{ su.Firm.name }}</a>
+                                    </td>
+                                    <td>
+                                        {{ su.FirmType.firm_type }}
+                                    </td>
+                                    <td>
+                                        {{ su.FirmTier.firm_tier }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.user', username=su.User.username) }}">{{ su.User.username }}</a>
+                                    </td>
+                                    <td>
+                                        {{ su.Firm.city }}
+                                    </td>
+                                    <td>
+                                        {{ su.Firm.state }}
+                                    </td>
+                                    <td>
+                                        {{ su.Firm.country }}
+                                    </td>
+                                    <td>
+                                        10
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end startup orgs table -->
+    {% endif %}
+
+    <!-- accounts table -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-key fa-fw"></i> Accounts
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a href="#"><i class="fa fa-file-excel-o fa-fw"></i> Export to Excel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Account ID</th>
+                                    <th>Region</th>
+                                    <th>Charges</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>123456789111</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>123456789222</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>123456789333</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>123456789444</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>123456789555</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>123456789666</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>123456789777</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>123456789888</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>123456789999</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>123456789101</td>
+                                    <td>US-SF</td>
+                                    <td>$10,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end account id table -->
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+
+<!-- Morris Chart Data -->
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/raphael/raphael-min.js') }}"></script>
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/morrisjs/morris.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/morris-data-startup.js') }}"></script>
+
+{% endblock scripts %}

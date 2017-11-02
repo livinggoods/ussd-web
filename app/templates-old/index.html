@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block wrapper %}
+
+    <!-- relationship summary header -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Relationships <small> Owned by {{ current_user.username }}</small>
+            </h1>
+        </div>
+    </div>
+    <!-- end relationship summary header -->
+
+    <!-- relationship summary componets -->
+    <div class="row">
+
+        <!-- details column -->
+        <div class="col-lg-4">
+
+            <!-- vc firm details -->
+            <div class="panel panel-blue">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-university fa-4x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="panel-data">{{ current_user.firm_count('vc') }}</div>
+                            <div>Venture Capital Firms</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('main.firms', username = current_user.username, firm_type_code = 'vc') }}">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+            <!-- end vc firm details -->
+
+            <!-- ai firm details -->
+            <div class="panel panel-grey">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-rocket fa-4x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="panel-data">{{ current_user.firm_count('ai') }}</div>
+                            <div>Accelerators and Incubators</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('main.firms', username = current_user.username, firm_type_code = 'ai') }}">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+            <!-- end ai firm details -->
+
+            <!-- startup org firm details -->
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-building-o fa-4x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="panel-data">{{ current_user.firm_count('su') }}</div>
+                            <div>Startup Organizations</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('main.firms', username = current_user.username, firm_type_code = 'su') }}">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+            <!-- end startup org firm details -->
+
+        </div>
+        <!-- end details column -->
+
+        <!-- firm summary bar chart -->
+        <div class="col-lg-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bar-chart-o fa-fw"></i> Relationship Summary by Tier
+                </div>
+                <div class="panel-body">
+                    <div class="morris-charts" id="firm-bar-chart"></div>
+                </div>
+            </div>
+        </div>
+        <!-- end firm summary bar chart -->
+
+    </div>
+    <!-- end relationship summary componets -->
+
+
+
+
+    <!-- penetration summary header -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Penetration Summary <small>Penetration for {{ current_user.username }}</small>
+            </h1>
+        </div>
+    </div>
+    <!-- end penetration summary header -->
+
+    <!-- penetration summary componets -->
+    <div class="row">
+
+        <!-- vc penetration donut chart -->
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-university fa-fw"></i> M+ Venture Captial Penetration
+                </div>
+                <div class="panel-body">
+                    <div class="morris-charts" id="vc-penetration-donut"></div>
+                </div>
+            </div>
+        </div>
+        <!-- end vc penetration donut chart -->
+
+        <!-- ai penetration donut chart -->
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-rocket fa-fw"></i> 12-Month A&amp;I Penetration
+                </div>
+                <div class="panel-body">
+                    <div class="morris-charts" id="ai-penetration-donut"></div>
+                </div>
+            </div>
+        </div>
+        <!-- end ai penetration donut chart -->
+
+        <!-- overall penetration donut chart -->
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-pie-chart fa-fw"></i> Overall Penetration
+                </div>
+                <div class="panel-body">
+                    <div class="morris-charts" id="overall-penetration-donut"></div>
+                </div>
+            </div>
+        </div>
+        <!-- end overall penetration donut chart -->
+
+    </div>
+    <!-- end relationship summary componets -->
+
+
+
+
+
+    <!-- top firms header -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Top Relationships By Charges <small> Owned by {{ current_user.username }}</small>
+            </h1>
+        </div>
+    </div>
+    <!-- end top firms header -->
+
+    <!-- top vc firms table -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-university fa-fw"></i> Top Venture Capital Firms
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Tier</th>
+                                    <th>Owner</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Charges</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for firm in top_vc_firms %}
+                            <tr>
+                                <td>
+                                    {{ loop.index }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.firm', id=firm.Firm.id) }}">
+                                        {{ firm.Firm.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ firm.FirmType.firm_type }}
+                                </td>
+                                <td>
+                                    {{ firm.FirmTier.firm_tier }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.user', username = firm.Firm.owner.username) }}">
+                                        {{ firm.Firm.owner.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ firm.Firm.city }}
+                                </td>
+                                <td>
+                                    {{ firm.Firm.state }}
+                                </td>
+                                <td>
+                                    {{ firm.Firm.country }}
+                                </td>
+                                <td>
+                                    $10,000
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                    <a class="btn btn-default btn-lg btn-block" href="{{ url_for('main.firms', username=current_user.username, firm_type_code = 'vc') }}" role="button">View All Venture Captial Firms Owned by {{ current_user.username }}</a>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end top vc firms table -->
+
+    <!-- top ai firms table -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-rocket fa-fw"></i> Top Accelerator and Incubators
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Tier</th>
+                                    <th>Owner</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Charges</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for firm in top_ai_firms %}
+                            <tr>
+                                <td>
+                                    {{ loop.index }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.firm', id=firm.Firm.id) }}">
+                                        {{ firm.Firm.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ firm.FirmType.firm_type }}
+                                </td>
+                                <td>
+                                    {{ firm.FirmTier.firm_tier }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.user', username = firm.Firm.owner.username) }}">
+                                        {{ firm.Firm.owner.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ firm.Firm.city }}
+                                </td>
+                                <td>
+                                    {{ firm.Firm.state }}
+                                </td>
+                                <td>
+                                    {{ firm.Firm.country }}
+                                </td>
+                                <td>
+                                    $10,000
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                    <a class="btn btn-default btn-lg btn-block" href="{{ url_for('main.firms', username=current_user.username, firm_type_code='ai') }}" role="button">View All Accelerator and Incubators Owned by {{ current_user.username }}</a>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end top ai firms table -->
+
+    <!-- top startup orgs table -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-building-o fa-fw"></i> Top Startup Organizations
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Tier</th>
+                                    <th>Owner</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Charges</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for firm in top_su_firms %}
+                            <tr>
+                                <td>
+                                    {{ loop.index }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.firm', id=firm.Firm.id) }}">
+                                        {{ firm.Firm.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ firm.FirmType.firm_type }}
+                                </td>
+                                <td>
+                                    {{ firm.FirmTier.firm_tier }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.user', username = firm.Firm.owner.username) }}">
+                                        {{ firm.Firm.owner.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ firm.Firm.city }}
+                                </td>
+                                <td>
+                                    {{ firm.Firm.state }}
+                                </td>
+                                <td>
+                                    {{ firm.Firm.country }}
+                                </td>
+                                <td>
+                                    $10,000
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                    <a class="btn btn-default btn-lg btn-block" href="{{ url_for('main.firms', username=current_user.username, firm_type_code='su') }}" role="button">View All Startup Organizations Owned by {{ current_user.username }}</a>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- end top startup orgs table -->
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+
+<!-- Morris Chart Data -->
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/raphael/raphael-min.js') }}"></script>
+<script src="{{ url_for('static', filename='sb-admin-2/bower_components/morrisjs/morris.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/morris-data-index.js') }}"></script>
+
+{% endblock scripts %}
