@@ -55,9 +55,18 @@ def index():
             return jsonify(filename='none')
     return render_template('index.html', form = form)
 
+# @api.route('/phone-queue/<int:id>', methods=['GET', 'POST'])
+# @api.route('/phone-queue', methods=['POST', 'GET'])
+# #@login_required
+# def phone_queue(id=None):
+
+@main.route('/phone_queues/<int:id>')
 @main.route('/phone_queues')
-def phone_queue():
-    queues = PhoneQueue.query.filter_by(deleted=False).all()
+def phone_queue(id=None):
+    if id is not None:
+      queues = PhoneQueue.query.filter_by(deleted=False, queue_id=id).all()
+    else:
+      queues = PhoneQueue.query.filter_by(deleted=False).all()
     return render_template('phone_queues.html', queues=queues,
                            title="Phone Queues", subtitle="")
 
