@@ -27,11 +27,13 @@
                                                 <tr>
                                                     <td><a href="#">{{data.id}}</a></td>
                                                     <td>{{data.name}}</td>
-                                                    <td>{{data.country}}</td>
+                                                    <td>{{data.geo.geo_name}}</td>
                                                     <td>{{data.date_added}}</td>
                                                     <td>{{data.status}}</td>
                                                     <td>
-                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                        <a href="/phone_queues/{{data.id}}">
+                                                            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                        </a>
                                                         <a href="/bundle-balance/{{data.id}}">
                                                             <i class="fa fa-download" aria-hidden="true"></i>
                                                         </a>
