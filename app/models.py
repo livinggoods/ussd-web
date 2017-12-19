@@ -225,7 +225,9 @@ class UssdMessage(db.Model):
     date_added = db.Column(db.DateTime(), default=datetime.utcnow())
     active = db.Column(db.Boolean, default=False, index=True)
     deleted = db.Column(db.Boolean, default=False, index=True)
-    queue_id = db.Column(db.ForeignKey(u'phones.id'), nullable=True)
+    queue_id = db.Column(db.ForeignKey(u'queues.id'), nullable=True)
+
+    queue = relationship(u'Queue')
     
     def to_json(self):
         json = {

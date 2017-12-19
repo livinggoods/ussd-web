@@ -7,7 +7,7 @@
                         <div class="card">
                             <div class="card-block">
                                {% if title %}<span class="card-title">{{title}}</span>{% endif %}
-                                <a href="" class="btn waves-effect waves-light btn-danger pull-right hidden-sm-down"> Create new</a>
+                                <a href="{{ url_for('main.new_phone_queue')}}" class="btn waves-effect waves-light btn-danger pull-right hidden-sm-down"> Create new</a>
 
                                 {% if subtitle %}<h6 class="card-subtitle">{{subtitle}}</h6>{% endif %}
                                 <div class="table-responsive">
@@ -19,6 +19,7 @@
                                                 <th>Country</th>
                                                 <th>Date</th>
                                                 <th>Status</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -29,6 +30,12 @@
                                                     <td>{{data.country}}</td>
                                                     <td>{{data.date_added}}</td>
                                                     <td>{{data.status}}</td>
+                                                    <td>
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                        <a href="/bundle-balance/{{data.id}}">
+                                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             {% endfor %}
 

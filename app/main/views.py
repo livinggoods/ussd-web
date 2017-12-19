@@ -4,10 +4,12 @@ from flask_login import current_user, login_required
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, UploadForm, QueueForm
 from .. import db
-from ..models import (Phone, Role, User, Geo, UserType, Branch, PhoneQueue, Queue)
+from ..models import (Phone, Role, User, Geo, UserType, Branch, PhoneQueue, Queue, UssdMessage)
 from ..decorators import admin_required, permission_required
 from werkzeug.utils import secure_filename
 import os
+import io
+import flask_excel as excel
 from flask import Response
 from ..utils import process_phone_csv
 import json
@@ -133,6 +135,23 @@ def select_phones_queue(id):
 def queue():
     queues = Queue.query.filter_by(deleted=False).all()
     return render_template('queues.html', queues=queues, title="Queues")
+
+@main.route('/bundle-balance/<int:queue_id>')
+def get_bundle_balance(queue_id):
+  dest = io.StringIO()
+  data = []
+  balances = UssdMessage.query.filter_by(queue_id=queue_id).all()
+  queue_name = Queue.query.filter_by(id=queue_id).first()
+  header = ['Name', 'Phone', 'Balance (in Mbs)', 'Expiry']
+  data.append(header)
+  for msg in balances:
+    queue = PhoneQueue.query.filter_by(id=msg.id).first()
+    row = [queue.assigned_to, queue.phone_number, msg.bundle_balance, msg.expiry_datetime]
+    data.append(row)
+  output = excel.make_response_from_array(data, 'csv')
+  output.headers["Content-Disposition"] = "attachment; filename="+queue_name.name+".csv"
+  output.headers["Content-type"] = "text/csv"
+  return output
 
 
 @main.route('/user/<username>')

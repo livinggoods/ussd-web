@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
 from config import config
+import flask_excel as excel
 
 # initialize flask extensions
 # note, extensions are initalized with no Flask app instance because
@@ -38,6 +39,7 @@ def create_app(config_name):
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
+    excel.init_excel(app)
     admin = Admin(app, name='Admin', template_mode='bootstrap3')
     login_manager.init_app(app)
 
