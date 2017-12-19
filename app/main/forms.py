@@ -2,7 +2,7 @@ from flask_wtf import Form
 from flask_wtf.file import FileField, FileRequired
 from wtforms import (StringField, TextAreaField, BooleanField, SelectField, SubmitField, ValidationError)
 from wtforms.validators import DataRequired, Length, Email, Regexp
-from ..models import Role, User, Geo, UserType
+from ..models import Role, User, Geo, UserType, Branch
 
 
 class EditProfileForm(Form):
@@ -94,3 +94,22 @@ class UploadForm(Form):
     
     def __init__(self, *args, **kwargs):
         super(UploadForm, self).__init__(*args, **kwargs)
+
+
+class QueueForm(Form):
+    queue_name = StringField('Queue Name', validators=[Length(0, 64), DataRequired()])
+    branch_id = SelectField('Branch', coerce=int)
+    status = StringField('Status', validators=[Length(0, 64)])
+    country = SelectField('Country', coerce=int)
+    all_phones_included = SelectField('Include All numbers', coerce=int)
+    submit = SubmitField('Submit')
+    
+    def __init__(self, *args, **kwargs):
+        super(QueueForm, self).__init__(*args, **kwargs)
+        self.country.choices = [(geo.id, geo.geo_name)
+                             for geo in Geo.query.order_by(Geo.geo_name).all()]
+        self.country.choices.insert(0, (-1, ''))
+        self.branch_id.choices = [(branch.id, branch.branch_name) for branch in Branch.query.order_by(Branch.branch_name).all()]
+        self.branch_id.choices.insert(0, (-1, ''))
+
+        self.all_phones_included.choices = [(1, 'Yes'), (0, 'No')]

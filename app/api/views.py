@@ -1,8 +1,10 @@
 from . import api
 from flask_login import login_required, current_user
-from flask import Response, jsonify
+from flask import Response, jsonify, request
 from .. models import (MessageType, UssdMessage, Branch, Phone, PhoneQueue)
 import json
+from .. import db
+from datetime import datetime
 
 
 
@@ -37,10 +39,15 @@ def phones():
     phones = Phone.query.filter_by(deleted=False).all()
     return jsonify({'phones': [phone.to_json() for phone in phones]})
 
+
+@api.route('/phone-queue/<int:id>', methods=['GET', 'POST'])
 @api.route('/phone-queue', methods=['POST', 'GET'])
 #@login_required
-def phone_queue():
-    queue = PhoneQueue.query.filter_by(deleted=False).all()
+def phone_queue(id=None):
+    if id is not None:
+        queue = PhoneQueue.query.filter_by(deleted=False, queue_id=id).all()
+    else:
+        queue = PhoneQueue.query.filter_by(deleted=False).all()
     return jsonify({'queue': [phone.to_json() for phone in queue]})
 
 @api.route('/roles', methods=['POST', 'GET'])
@@ -64,5 +71,39 @@ def users():
 @api.route('/ussd_messages', methods=['POST', 'GET'])
 #@login_required
 def ussd_messages():
-    messa = UssdMessage.query.filter_by(deleted=False).all()
-    return Response(json.dumps(messa, indent=4), mimetype='application/json')
+    if request.method == "GET":
+        messa = UssdMessage.query.filter_by(deleted=False).all()
+        return Response(json.dumps(messa, indent=4), mimetype='application/json')
+    else:
+        messages = request.json.get('messages')
+        saved_messages = []
+        for message in messages:
+            #message is a dictionary
+            text_msg = message.get('message')
+            #Split this guy by space
+            text_msg = text_msg.replace('is being ', '')
+            details = text_msg.split(" ")
+            mb = details[details.index('is')+1]
+            expiry = details[details.index('on')+1]
+            expiry = expiry[:-1] + " " + details[details.index('until')+1]
+            ph = Phone.query.filter_by(phone_number=message.get('phone_number')).first()
+            # Check if the ussdmessage exists, so that we do not add it.
+            ussd = UssdMessage.query.filter_by(phone_number=message.get('phone_number'),
+                                               queue_id=message.get('queue_id')
+                                               if message.get('queue_id') != '' else None).first()
+            if not ussd:
+                ussd = UssdMessage(
+                    phone_number=message.get('phone_number'),
+                    message = message.get('message'),
+                    branch_id = ph.branch_id,
+                    phone_id =ph.id,
+                    queue_id =message.get('queue_id') if message.get('queue_id') != '' else None,
+                    bundle_balance = mb,
+                    expiry_datetime = datetime.strptime(expiry, '%d-%m-%Y %H:%M'),
+                    country = ph.country,
+                )
+            # Save
+            db.session.add(ussd)
+            db.session.commit()
+            saved_messages.append(ussd.id)
+        return jsonify(messages=saved_messages)

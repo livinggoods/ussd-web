@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+ {% block title %}Phone Queue{% endblock %}
+{% block page_content %}
+<div class="row">
+                    <!-- column -->
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-block">
+                               {% if title %}<span class="card-title">{{title}}</span>{% endif %}
+
+                                {% if subtitle %}<h6 class="card-subtitle">{{subtitle}}</h6>{% endif %}
+                                <div class="table-responsive">
+                                    {{ wtf.quick_form(form) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{% endblock %}

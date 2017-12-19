@@ -148,10 +148,10 @@ class Queue(db.Model):
     __tablename__ = 'queues'
     
     id = db.Column(db.Integer, primary_key=True)
-    branch_id = db.Column(db.ForeignKey(u'branches.id'), index=True)
+    branch_id = db.Column(db.ForeignKey(u'branches.id'), index=True,  nullable=True)
     name = db.Column(db.String(45))
     status = db.Column(db.String(45))
-    country = db.Column(db.String(45))
+    country = db.Column(db.ForeignKey(u'geos.id'), index=True)
     deleted = db.Column(db.Boolean, default=False, index=True)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow())
     
@@ -162,28 +162,38 @@ class PhoneQueue(db.Model):
     __tablename__ = 'phone_queue'
     
     id = db.Column(db.Integer, primary_key=True)
-    branch_id = db.Column(db.ForeignKey(u'branches.id'), index=True)
+    branch_id = db.Column(db.ForeignKey(u'branches.id'), index=True, nullable=True)
     queue_id = db.Column(db.ForeignKey(u'queues.id'), index=True)
     phone_number = db.Column(db.String(45))
+    assigned_to = db.Column(db.String(45))
+    phone_id = db.Column(db.ForeignKey(u'phones.id'), index=True)
     status = db.Column(db.String(45))
     error_message = db.Column(db.String(45))
     country = db.Column(db.String(45))
-    sent = db.Column(db.Boolean, default=False, index=True)
+    sent = db.Column(db.Boolean, default=False)
     deleted = db.Column(db.Boolean, default=False, index=True)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow())
+    synced = db.Column(db.Boolean, default=False)
     
     branch = relationship(u'Branch')
+    queue = relationship(u'Queue')
+    phone = relationship(u'Phone')
     
     def to_json(self):
         json = {
             'id': self.id,
             'branch_id': self.branch_id,
+            'branch_name': self.branch.branch_name,
             'phone_number': self.phone_number,
             'status': self.status,
+            'queue_id': self.queue_id,
             'country': self.country,
             'error_message': self.error_message,
             'sent': self.sent,
-            'deleted': self.deleted
+            'assigned_to':self.phone.assigned_to,
+            'phone_id':self.phone.id,
+            'deleted': self.deleted,
+            'synced': self.synced
         }
         return json
     
@@ -215,6 +225,7 @@ class UssdMessage(db.Model):
     date_added = db.Column(db.DateTime(), default=datetime.utcnow())
     active = db.Column(db.Boolean, default=False, index=True)
     deleted = db.Column(db.Boolean, default=False, index=True)
+    queue_id = db.Column(db.ForeignKey(u'phones.id'), nullable=True)
     
     def to_json(self):
         json = {

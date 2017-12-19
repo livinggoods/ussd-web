@@ -1,8 +1,8 @@
-from flask import (render_template, redirect, url_for, flash, request, abort,
+from flask import (render_template, redirect, url_for, flash, request, abort, session,
                    Response, current_app, jsonify)
 from flask_login import current_user, login_required
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm, UploadForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, UploadForm, QueueForm
 from .. import db
 from ..models import (Phone, Role, User, Geo, UserType, Branch, PhoneQueue, Queue)
 from ..decorators import admin_required, permission_required
@@ -59,10 +59,80 @@ def phone_queue():
     return render_template('phone_queues.html', queues=queues,
                            title="Phone Queues", subtitle="")
 
+
+@main.route('/phone_queues/new', methods=['GET', 'POST'])
+def new_phone_queue():
+    form = QueueForm()
+    if form.validate_on_submit():
+      # create a queue
+      queue = Queue(
+        branch_id = form.branch_id.data if form.branch_id.data != -1 else None,
+        name = form.queue_name.data,
+        status = form.status.data,
+        country = form.country.data,
+      )
+      db.session.add(queue)
+      db.session.commit()
+      session['branch'] = form.branch_id.data if form.branch_id.data != -1 else None
+      if form.all_phones_included.data == 1:
+        # if Branch is selected, only include phone numbers for that Branch
+        if form.branch_id.data != -1:
+          phones = Phone.query.filter_by(deleted=False, branch_id=form.branch_id.data).all()
+        else:
+          phones = Phone.query.filter_by(deleted=False).all()
+        for phone in phones:
+          phone_queue = PhoneQueue(
+            country = form.country.data,
+            branch_id=form.branch_id.data,
+            queue_id=queue.id,
+            phone_number=phone.phone_number,
+            assigned_to=phone.assigned_to,
+            phone_id=phone.id,
+            sent=False
+          )
+          db.session.add(phone_queue)
+        db.session.commit()
+        return redirect(url_for('main.phone_queue'))
+      else:
+        return redirect('/phone_queues/new/'+str(queue.id))
+    return render_template('new_phone_queues.html', form=form,
+                           title="New Phone Queue", subtitle="")
+
+@main.route('/phone_queues/new/<int:id>', methods=['GET', 'POST'])
+def select_phones_queue(id):
+    if request.method=="POST":
+      selected_phones=request.form.getlist('phones[]')
+      queue= request.form.get('queue')
+      for p in selected_phones:
+        phone = Phone.query.filter_by(id=p).first()
+        phone_queue = PhoneQueue(
+            country = phone.country,
+            branch_id = phone.branch_id,
+            queue_id = queue,
+            phone_number = phone.phone_number,
+            assigned_to = phone.assigned_to,
+            phone_id = phone.id,
+            sent = False,
+            deleted = False
+        )
+        db.session.add(phone_queue)
+        db.session.commit()
+      return jsonify(data={'queue':queue, 'phone':selected_phones})
+
+    branch = session.get('branch', None)
+    print "========================="
+    print branch
+    if branch is not None:
+      phones = Phone.query.filter_by(deleted=False, branch_id=branch).all()
+    else:
+      phones = Phone.query.filter_by(deleted=False).all()
+    return render_template('new_queue_phone_selection.html', phones=phones,
+                           title="New Phone Queue", subtitle="", queue=id)
+
 @main.route('/queues')
 def queue():
     queues = Queue.query.filter_by(deleted=False).all()
-    return render_template('phone_queues.html', queues=queues, title="Queues")
+    return render_template('queues.html', queues=queues, title="Queues")
 
 
 @main.route('/user/<username>')

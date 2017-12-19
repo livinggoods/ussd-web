@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+ {% block title %}Phone Queue{% endblock %}
+{% block page_content %}
+<div class="row" xmlns="http://www.w3.org/1999/html">
+                    <!-- column -->
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-block">
+                               {% if title %}<span class="card-title">{{title}}</span>{% endif %}
+
+                                {% if subtitle %}<h6 class="card-subtitle">{{subtitle}}</h6>{% endif %}
+                                <table class="table table-hover no-wrap chp-datatable">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:40px">
+                                                <div class="checkbox">
+                                                    <input type="checkbox" id="check_all" class="check_all" value="check">
+                                                    <label for="check_all"></label>
+                                                </div>
+                                            </th>
+                                            <th>CHP</th>
+                                            <th>Phone</th>
+                                            <th>Branch</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                             <th style="width:40px">
+                                                <div class="checkbox">
+                                                    <input type="checkbox" id="check_all1" class="check_all" value="check">
+                                                    <label for="check_all1"></label>
+                                                </div>
+                                            </th>
+                                            <th>CHP</th>
+                                            <th>Phone</th>
+                                            <th>Branch</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        {% for phone in phones %}
+                                            <tr class="unread">
+                                                <td style="width:40px">
+                                                    <div class="checkbox">
+                                                        <input type="checkbox" class="chp-phone-select" id="checkbox{{phone.id}}" value="{{phone.id}}">
+                                                        <label for="checkbox{{phone.id}}"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="hidden-xs-down">{{phone.assigned_to }}</td>
+                                                <td class="max-texts"> {{phone.phone_number }}</td>
+                                                <td class="hidden-xs-down">{{phone.branch}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Saving details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                            <h1 class="text-center"><i class="fa fa-spinner fa-pulse"></i></h1>
+                      </div>
+                      <div class="modal-footer">
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+{% endblock %}
+{%block script %}
+    <script>
+        var queue = {{queue}};
+        var checkAll = false;
+        var selectedPhones = [];
+        $('.chp-datatable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    text: 'Submit',
+                    action: function ( e, dt, node, config ) {
+                        $('#myModal').modal('show');
+
+                        console.log("-----------------");
+                        console.log(selectedPhones);
+                        console.log("-----------------");
+                        $.ajax({
+                          type: "POST",
+                          url: '/phone_queues/new/{{queue}}',
+                          data: {queue:queue, phones:selectedPhones},
+                          dataType: 'json',
+                          success: function(data){
+                            setTimeout(function(){
+                              $('#myModal').modal('hide');
+                            }, 2000);
+
+                          }
+                        });
+                    }
+                }
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: 0
+            }],
+            order: [
+                [1, 'asc']
+            ]
+        });
+
+        // create an array of selected items
+        $(".chp-phone-select").on("change", function() {
+            console.log("Checking");
+            if (this.checked) {
+              console.log("Value "+this.value+" is checked");
+              selectedPhones.push(this.value);
+            }
+            if (!this.checked) {
+              console.log("Value "+this.value+" is unchecked");
+              var index = selectedPhones.indexOf(this.value);
+              if (index > -1){
+                selectedPhones.splice(index, 1);
+              }
+            }
+        });
+
+        $('.check_all').click(function(){
+            $(".chp-phone-select").prop('checked', $(this).prop('checked'));
+            $(".chp-phone-select").trigger('change');
+            if (this.checked){
+                checkAll = true;
+            }else{
+                checkAll = false;
+            }
+        });
+
+        $('.paginate_button').click(function (){
+            $(".chp-phone-select").on("change", function() {
+                if (this.checked) {
+                  console.log("Value "+this.value+" is checked");
+                  selectedPhones.push(this.value);
+                }
+                if (!this.checked) {
+                  console.log("Value "+this.value+" is unchecked");
+                  var index = selectedPhones.indexOf(this.value);
+                  if (index > -1){
+                    selectedPhones.splice(index, 1);
+                  }
+                }
+            });
+
+            if (checkAll){
+                console.log("checked all");
+                $(".chp-phone-select").prop('checked', $('.chp-phone-select').prop('checked'));
+                $(".chp-phone-select").trigger('change');
+            }
+        });
+    </script>
+{% endblock %}
