@@ -156,6 +156,7 @@ class Queue(db.Model):
     date_added = db.Column(db.DateTime(), default=datetime.utcnow())
     
     branch = relationship(u'Branch')
+    geo = relationship(u'Geo')
 
 
 class PhoneQueue(db.Model):
