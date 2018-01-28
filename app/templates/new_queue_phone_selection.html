@@ -90,10 +90,6 @@
                     text: 'Submit',
                     action: function ( e, dt, node, config ) {
                         $('#myModal').modal('show');
-
-                        console.log("-----------------");
-                        console.log(selectedPhones);
-                        console.log("-----------------");
                         $.ajax({
                           type: "POST",
                           url: '/phone_queues/new/{{queue}}',
