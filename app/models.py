@@ -150,13 +150,33 @@ class Queue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     branch_id = db.Column(db.ForeignKey(u'branches.id'), index=True,  nullable=True)
     name = db.Column(db.String(45))
+    branch_name = db.Column(db.String(45))
     status = db.Column(db.String(45))
     country = db.Column(db.ForeignKey(u'geos.id'), index=True)
-    deleted = db.Column(db.Boolean, default=False, index=True)
+    deleted = db.Column(db.Boolean, server_default=text(u'false'),default=False, nullable=False)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow())
+    selected = db.Column(db.Boolean, default=False, server_default=text(u'false'), nullable=False)
+    completed = db.Column(db.Boolean, default=False, server_default=text(u'false'), nullable=False)
+    synced = db.Column(db.Boolean, default=False, server_default=text(u'false'), nullable=False)
     
     branch = relationship(u'Branch')
     geo = relationship(u'Geo')
+    
+    def to_json(self):
+        return {
+            'id': self.id,
+            'branch_id': self.branch_id,
+            'branch_name': self.branch.branch_name if self.branch_id is not None else None,
+            'branch': self.branch.to_json() if self.branch_id is not None else None,
+            'name': self.name,
+            'status': self.status,
+            'country': self.geo.geo_code if self.geo is not None else None,
+            'deleted': self.deleted,
+            'selected': self.selected,
+            'completed': self.completed,
+            'synced': self.synced,
+            'date_added': float(self.date_added.strftime('%s')) if self.date_added is not None else None
+        }
 
 
 class PhoneQueue(db.Model):
