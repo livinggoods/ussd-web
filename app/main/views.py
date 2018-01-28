@@ -131,8 +131,6 @@ def select_phones_queue(id):
       return jsonify(data={'queue':queue, 'phone':selected_phones})
 
     branch = session.get('branch', None)
-    print "========================="
-    print branch
     if branch is not None:
       phones = Phone.query.filter_by(deleted=False, branch_id=branch).all()
     else:
