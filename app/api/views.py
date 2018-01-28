@@ -45,10 +45,40 @@ def phones():
 #@login_required
 def phone_queue(id=None):
     if id is not None:
-        queue = PhoneQueue.query.filter_by(deleted=False, queue_id=id).all()
+        queue = PhoneQueue.query.filter_by(deleted=False, sent=False, queue_id=id).all()
     else:
-        queue = PhoneQueue.query.filter_by(deleted=False).all()
+        queue = PhoneQueue.query.filter_by(deleted=False, sent=False).all()
     return jsonify({'queue': [phone.to_json() for phone in queue]})
+
+
+@api.route('/phone-queue/received', methods=['GET', 'POST'])
+@api.route('/phone-queue/<int:id>/received', methods=['GET', 'POST'])
+#@login_required
+def phone_queue_received(id=None):
+    if request.method == "POST":
+        if id is not None:
+            queue = PhoneQueue.query.filter_by(deleted=False, id=id).first()
+            queue.sent=True
+            db.session.add(queue)
+            db.session.commit()
+            return jsonify(status=queue.to_json())
+        else:
+            if request.json:
+                received_phones = request.json.get('phones')
+                updated_phones =[]
+                for q in received_phones:
+                    # country is a string
+                    saved_record = PhoneQueue.query.filter_by(id=q.get('id')).first()
+                    saved_record.sent = True
+                    db.session.add(saved_record)
+                    db.session.commit()
+                    updated_phones.append(saved_record.to_json())
+                return jsonify({'updated': updated_phones})
+            else:
+                return jsonify({'error': "no data found"})
+            return jsonify({'error': "queue-id is required"})
+    else:
+        return make_response(jsonify(error="method not allowed"), 405)
 
 @api.route('/queue', methods=['POST', 'GET'])
 #@login_required
