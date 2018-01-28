@@ -50,6 +50,29 @@ def phone_queue(id=None):
         queue = PhoneQueue.query.filter_by(deleted=False).all()
     return jsonify({'queue': [phone.to_json() for phone in queue]})
 
+@api.route('/queue', methods=['POST', 'GET'])
+#@login_required
+def get_queues():
+    queue = Queue.query.filter_by(selected=False, deleted=False).all()
+    return jsonify({'queue': [q.to_json() for q in queue]})
+
+
+@api.route('/selectedqueues', methods=['POST', 'GET'])
+#@login_required
+def get_selectedqueues():
+    if request.method == "GET":
+        queue = Queue.query.filter_by(deleted=False).all()
+        return jsonify({'queue': [q.to_json() for q in queue]})
+    else:
+        selected_queues =request.json.get('queue')
+        for q in selected_queues:
+            # country is a string
+            saved_record = Queue.query.filter_by(id=q.get('id')).first()
+            saved_record.selected = q.get('selected')
+            db.session.add(saved_record)
+            db.session.commit()
+        return jsonify(status='ok')
+
 @api.route('/roles', methods=['POST', 'GET'])
 #@login_required
 def roles():
