@@ -89,6 +89,7 @@
                 {
                     text: 'Submit',
                     action: function ( e, dt, node, config ) {
+                        console.log(selectedPhones);
                         $('#myModal').modal('show');
                         $.ajax({
                           type: "POST",
@@ -161,5 +162,26 @@
                 $(".chp-phone-select").trigger('change');
             }
         });
+        $(document).on("click", '.paginate_button', function(event) {
+            $(".chp-phone-select").on("change", function() {
+                if (this.checked) {
+                  console.log("Value "+this.value+" is checked");
+                  selectedPhones.push(this.value);
+                }
+                if (!this.checked) {
+                  console.log("Value "+this.value+" is unchecked");
+                  var index = selectedPhones.indexOf(this.value);
+                  if (index > -1){
+                    selectedPhones.splice(index, 1);
+                  }
+                }
+            });
+
+            if (checkAll){
+                console.log("checked all");
+                $(".chp-phone-select").prop('checked', $('.chp-phone-select').prop('checked'));
+                $(".chp-phone-select").trigger('change');
+            }
+}       );
     </script>
 {% endblock %}
