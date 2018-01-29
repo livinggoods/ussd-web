@@ -153,8 +153,9 @@ def get_bundle_balance(queue_id):
   data.append(header)
   for msg in balances:
     queue = PhoneQueue.query.filter_by(id=msg.id).first()
-    row = [queue.assigned_to, queue.phone_number, msg.bundle_balance, msg.expiry_datetime]
-    data.append(row)
+    if queue is not None:
+      row = [queue.assigned_to , queue.phone_number, msg.bundle_balance, msg.expiry_datetime]
+      data.append(row)
   output = excel.make_response_from_array(data, 'csv')
   output.headers["Content-Disposition"] = "attachment; filename="+queue_name.name+".csv"
   output.headers["Content-type"] = "text/csv"
