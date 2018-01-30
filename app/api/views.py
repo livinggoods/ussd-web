@@ -144,17 +144,17 @@ def ussd_messages():
             ussd = UssdMessage.query.filter_by(phone_number=message.get('phone_number'),
                                                queue_id=message.get('queue_id')
                                                if message.get('queue_id') != '' else None).first()
-            if not ussd:
-                ussd = UssdMessage(
-                    phone_number=message.get('phone_number'),
-                    message = message.get('message'),
-                    branch_id = ph.branch_id,
-                    phone_id =ph.id,
-                    queue_id =message.get('queue_id') if message.get('queue_id') != '' else None,
-                    bundle_balance = mb,
-                    expiry_datetime = datetime.strptime(expiry, '%d-%m-%Y %H:%M'),
-                    country = ph.country,
-                )
+            # if not ussd:
+            ussd = UssdMessage(
+                phone_number=message.get('phone_number'),
+                message = message.get('message'),
+                branch_id = ph.branch_id,
+                phone_id =ph.id,
+                queue_id =message.get('queue_id') if message.get('queue_id') != '' else None,
+                bundle_balance = mb,
+                expiry_datetime = datetime.strptime(expiry, '%d-%m-%Y %H:%M'),
+                country = ph.country,
+            )
             # Save
             db.session.add(ussd)
             db.session.commit()
