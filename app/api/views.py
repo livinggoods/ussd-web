@@ -158,5 +158,5 @@ def ussd_messages():
             # Save
             db.session.add(ussd)
             db.session.commit()
-            saved_messages.append(ussd.to_json())
+            saved_messages.append(ussd.id)
         return jsonify(messages=saved_messages)
